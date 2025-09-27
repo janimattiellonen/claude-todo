@@ -1,120 +1,143 @@
 import { Request, Response } from 'express';
-import db from '../database';
-import { Todo, CreateTodo, UpdateTodo } from '../models/Todo';
+import { ITodoService } from '../services/TodoService';
+import { TodoNotFoundError, ValidationError, DatabaseError } from '../types/errors';
 
-export const getAllTodos = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const todos = await db('todos').select('*').orderBy('created_at', 'desc');
-    res.json(todos);
-  } catch (error) {
-    console.error('Error fetching todos:', error);
-    res.status(500).json({ error: 'Failed to fetch todos' });
-  }
-};
+export class TodoController {
+  constructor(private todoService: ITodoService) {}
 
-export const getTodoById = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const todo = await db('todos').where({ id }).first();
-
-    if (!todo) {
-      res.status(404).json({ error: 'Todo not found' });
-      return;
+  getAllTodos = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const todos = await this.todoService.getAllTodos();
+      res.json(todos);
+    } catch (error) {
+      console.error('Error fetching todos:', error);
+      res.status(500).json({ error: 'Failed to fetch todos' });
     }
+  };
 
-    res.json(todo);
-  } catch (error) {
-    console.error('Error fetching todo:', error);
-    res.status(500).json({ error: 'Failed to fetch todo' });
-  }
-};
-
-export const createTodo = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const {
-      title,
-      body,
-      priority = 1,
-      deadline,
-      done = false,
-    }: CreateTodo = req.body;
-
-    if (!title) {
-      res.status(400).json({ error: 'Title is required' });
-      return;
+  getTodoById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = parseInt(req.params.id);
+      const todo = await this.todoService.getTodoById(id);
+      res.json(todo);
+    } catch (error) {
+      if (error instanceof TodoNotFoundError) {
+        res.status(404).json({ error: error.message });
+      } else {
+        console.error('Error fetching todo:', error);
+        res.status(500).json({ error: 'Failed to fetch todo' });
+      }
     }
+  };
 
-    if (priority < 1 || priority > 10) {
-      res.status(400).json({ error: 'Priority must be between 1 and 10' });
-      return;
+  createTodo = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const todo = await this.todoService.createTodo(req.body);
+      res.status(201).json(todo);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ error: error.message });
+      } else {
+        console.error('Error creating todo:', error);
+        res.status(500).json({ error: 'Failed to create todo' });
+      }
     }
+  };
 
-    const [todo] = await db('todos')
-      .insert({ title, body, priority, deadline, done })
-      .returning('*');
-
-    res.status(201).json(todo);
-  } catch (error) {
-    console.error('Error creating todo:', error);
-    res.status(500).json({ error: 'Failed to create todo' });
-  }
-};
-
-export const updateTodo = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const { title, body, priority, deadline, done }: UpdateTodo = req.body;
-
-    if (priority && (priority < 1 || priority > 10)) {
-      res.status(400).json({ error: 'Priority must be between 1 and 10' });
-      return;
+  updateTodo = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = parseInt(req.params.id);
+      const todo = await this.todoService.updateTodo(id, req.body);
+      res.json(todo);
+    } catch (error) {
+      if (error instanceof TodoNotFoundError) {
+        res.status(404).json({ error: error.message });
+      } else if (error instanceof ValidationError) {
+        res.status(400).json({ error: error.message });
+      } else {
+        console.error('Error updating todo:', error);
+        res.status(500).json({ error: 'Failed to update todo' });
+      }
     }
+  };
 
-    const [todo] = await db('todos')
-      .where({ id })
-      .update({ title, body, priority, deadline, done, updated_at: new Date() })
-      .returning('*');
-
-    if (!todo) {
-      res.status(404).json({ error: 'Todo not found' });
-      return;
+  deleteTodo = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = parseInt(req.params.id);
+      await this.todoService.deleteTodo(id);
+      res.status(204).send();
+    } catch (error) {
+      if (error instanceof TodoNotFoundError) {
+        res.status(404).json({ error: error.message });
+      } else {
+        console.error('Error deleting todo:', error);
+        res.status(500).json({ error: 'Failed to delete todo' });
+      }
     }
+  };
 
-    res.json(todo);
-  } catch (error) {
-    console.error('Error updating todo:', error);
-    res.status(500).json({ error: 'Failed to update todo' });
-  }
-};
-
-export const deleteTodo = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const deletedCount = await db('todos').where({ id }).del();
-
-    if (deletedCount === 0) {
-      res.status(404).json({ error: 'Todo not found' });
-      return;
+  markAsComplete = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = parseInt(req.params.id);
+      const todo = await this.todoService.markAsComplete(id);
+      res.json(todo);
+    } catch (error) {
+      if (error instanceof TodoNotFoundError) {
+        res.status(404).json({ error: error.message });
+      } else {
+        console.error('Error marking todo as complete:', error);
+        res.status(500).json({ error: 'Failed to mark todo as complete' });
+      }
     }
+  };
 
-    res.status(204).send();
-  } catch (error) {
-    console.error('Error deleting todo:', error);
-    res.status(500).json({ error: 'Failed to delete todo' });
-  }
-};
+  markAsIncomplete = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = parseInt(req.params.id);
+      const todo = await this.todoService.markAsIncomplete(id);
+      res.json(todo);
+    } catch (error) {
+      if (error instanceof TodoNotFoundError) {
+        res.status(404).json({ error: error.message });
+      } else {
+        console.error('Error marking todo as incomplete:', error);
+        res.status(500).json({ error: 'Failed to mark todo as incomplete' });
+      }
+    }
+  };
+
+  getTodosByPriority = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const priority = parseInt(req.params.priority);
+      const todos = await this.todoService.getTodosByPriority(priority);
+      res.json(todos);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        res.status(400).json({ error: error.message });
+      } else {
+        console.error('Error fetching todos by priority:', error);
+        res.status(500).json({ error: 'Failed to fetch todos by priority' });
+      }
+    }
+  };
+
+  getPendingTodos = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const todos = await this.todoService.getPendingTodos();
+      res.json(todos);
+    } catch (error) {
+      console.error('Error fetching pending todos:', error);
+      res.status(500).json({ error: 'Failed to fetch pending todos' });
+    }
+  };
+
+  getCompletedTodos = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const todos = await this.todoService.getCompletedTodos();
+      res.json(todos);
+    } catch (error) {
+      console.error('Error fetching completed todos:', error);
+      res.status(500).json({ error: 'Failed to fetch completed todos' });
+    }
+  };
+}
