@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 import db from '../database';
 import { Todo, CreateTodo, UpdateTodo } from '../models/Todo';
 
-export const getAllTodos = async (req: Request, res: Response): Promise<void> => {
+export const getAllTodos = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const todos = await db('todos').select('*').orderBy('created_at', 'desc');
     res.json(todos);
@@ -12,7 +15,10 @@ export const getAllTodos = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-export const getTodoById = async (req: Request, res: Response): Promise<void> => {
+export const getTodoById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const todo = await db('todos').where({ id }).first();
@@ -29,9 +35,18 @@ export const getTodoById = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-export const createTodo = async (req: Request, res: Response): Promise<void> => {
+export const createTodo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const { title, body, priority = 1, deadline, done = false }: CreateTodo = req.body;
+    const {
+      title,
+      body,
+      priority = 1,
+      deadline,
+      done = false,
+    }: CreateTodo = req.body;
 
     if (!title) {
       res.status(400).json({ error: 'Title is required' });
@@ -54,7 +69,10 @@ export const createTodo = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const updateTodo = async (req: Request, res: Response): Promise<void> => {
+export const updateTodo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { title, body, priority, deadline, done }: UpdateTodo = req.body;
@@ -81,7 +99,10 @@ export const updateTodo = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const deleteTodo = async (req: Request, res: Response): Promise<void> => {
+export const deleteTodo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const deletedCount = await db('todos').where({ id }).del();

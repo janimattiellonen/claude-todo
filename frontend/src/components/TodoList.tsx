@@ -12,11 +12,16 @@ interface TodoListProps {
 
 type FilterType = 'all' | 'pending' | 'completed';
 
-export const TodoList: React.FC<TodoListProps> = ({ todos, loading, onUpdate, onDelete }) => {
+export const TodoList: React.FC<TodoListProps> = ({
+  todos,
+  loading,
+  onUpdate,
+  onDelete,
+}) => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredTodos = todos.filter(todo => {
+  const filteredTodos = todos.filter((todo) => {
     const matchesFilter =
       filter === 'all' ||
       (filter === 'pending' && !todo.done) ||
@@ -29,8 +34,8 @@ export const TodoList: React.FC<TodoListProps> = ({ todos, loading, onUpdate, on
     return matchesFilter && matchesSearch;
   });
 
-  const pendingCount = todos.filter(todo => !todo.done).length;
-  const completedCount = todos.filter(todo => todo.done).length;
+  const pendingCount = todos.filter((todo) => !todo.done).length;
+  const completedCount = todos.filter((todo) => todo.done).length;
 
   if (loading) {
     return (
@@ -79,12 +84,14 @@ export const TodoList: React.FC<TodoListProps> = ({ todos, loading, onUpdate, on
             {searchTerm ? 'No todos match your search' : 'No todos found'}
           </div>
           <p className="text-gray-400">
-            {searchTerm ? 'Try adjusting your search terms' : 'Add your first todo to get started!'}
+            {searchTerm
+              ? 'Try adjusting your search terms'
+              : 'Add your first todo to get started!'}
           </p>
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredTodos.map(todo => (
+          {filteredTodos.map((todo) => (
             <TodoItem
               key={todo.id}
               todo={todo}

@@ -9,7 +9,11 @@ interface TodoItemProps {
   onDelete: (id: number) => Promise<void>;
 }
 
-export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
+export const TodoItem: React.FC<TodoItemProps> = ({
+  todo,
+  onUpdate,
+  onDelete,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -98,7 +102,9 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) 
               placeholder="Todo title"
             />
             {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.title.message}
+              </p>
             )}
           </div>
 
@@ -117,8 +123,10 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) 
                 {...register('priority', { valueAsNumber: true })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
-                  <option key={num} value={num}>Priority {num}</option>
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  <option key={num} value={num}>
+                    Priority {num}
+                  </option>
                 ))}
               </select>
             </div>
@@ -167,7 +175,9 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) 
   }
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 border-l-4 ${todo.done ? 'border-green-500 bg-gray-50' : 'border-blue-500'} ${loading ? 'opacity-50' : ''}`}>
+    <div
+      className={`bg-white rounded-lg shadow-md p-6 border-l-4 ${todo.done ? 'border-green-500 bg-gray-50' : 'border-blue-500'} ${loading ? 'opacity-50' : ''}`}
+    >
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-3 mb-2">
@@ -177,16 +187,22 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) 
             >
               <Check className="w-4 h-4" />
             </button>
-            <h3 className={`text-lg font-medium ${todo.done ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+            <h3
+              className={`text-lg font-medium ${todo.done ? 'line-through text-gray-500' : 'text-gray-900'}`}
+            >
               {todo.title}
             </h3>
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(todo.priority)}`}>
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(todo.priority)}`}
+            >
               Priority {todo.priority}
             </span>
           </div>
 
           {todo.body && (
-            <p className={`text-gray-600 mb-3 ${todo.done ? 'line-through' : ''}`}>
+            <p
+              className={`text-gray-600 mb-3 ${todo.done ? 'line-through' : ''}`}
+            >
               {todo.body}
             </p>
           )}

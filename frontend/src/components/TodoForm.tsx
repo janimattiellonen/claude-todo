@@ -8,7 +8,10 @@ interface TodoFormProps {
   loading?: boolean;
 }
 
-export const TodoForm: React.FC<TodoFormProps> = ({ onSubmit, loading = false }) => {
+export const TodoForm: React.FC<TodoFormProps> = ({
+  onSubmit,
+  loading = false,
+}) => {
   const {
     register,
     handleSubmit,
@@ -31,11 +34,17 @@ export const TodoForm: React.FC<TodoFormProps> = ({ onSubmit, loading = false })
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-6 bg-white rounded-lg shadow-md">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-4 p-6 bg-white rounded-lg shadow-md"
+    >
       <h2 className="text-xl font-semibold text-gray-800 mb-4">Add New Todo</h2>
 
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Title *
         </label>
         <input
@@ -51,7 +60,10 @@ export const TodoForm: React.FC<TodoFormProps> = ({ onSubmit, loading = false })
       </div>
 
       <div>
-        <label htmlFor="body" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="body"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Description
         </label>
         <textarea
@@ -65,29 +77,39 @@ export const TodoForm: React.FC<TodoFormProps> = ({ onSubmit, loading = false })
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="priority"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Priority (1-10)
           </label>
           <select
             {...register('priority', {
               valueAsNumber: true,
               min: { value: 1, message: 'Priority must be at least 1' },
-              max: { value: 10, message: 'Priority must be at most 10' }
+              max: { value: 10, message: 'Priority must be at most 10' },
             })}
             id="priority"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
-              <option key={num} value={num}>{num}</option>
+            {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+              <option key={num} value={num}>
+                {num}
+              </option>
             ))}
           </select>
           {errors.priority && (
-            <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
+            <p className="mt-1 text-sm text-red-600">
+              {errors.priority.message}
+            </p>
           )}
         </div>
 
         <div>
-          <label htmlFor="deadline" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="deadline"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Deadline
           </label>
           <div className="relative">

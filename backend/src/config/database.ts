@@ -11,11 +11,11 @@ const config: { [key: string]: Knex.Config } = {
       port: parseInt(process.env.DB_PORT || '5432'),
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'password',
-      database: process.env.DB_NAME || 'claude_todo'
+      database: process.env.DB_NAME || 'claude_todo',
     },
     migrations: {
-      directory: './migrations'
-    }
+      directory: './migrations',
+    },
   },
 
   production: {
@@ -23,12 +23,12 @@ const config: { [key: string]: Knex.Config } = {
     connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
     migrations: {
-      directory: './migrations'
-    }
-  }
+      directory: './migrations',
+    },
+  },
 };
 
 const environment = process.env.NODE_ENV || 'development';
