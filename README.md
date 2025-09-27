@@ -263,6 +263,51 @@ npm run migrate
 npm run migrate:rollback
 ```
 
+### Database CLI Access
+
+You can connect to the PostgreSQL database using various CLI clients:
+
+#### Using psql (PostgreSQL CLI)
+```bash
+# Connect to database (when running via Docker)
+psql -h localhost -p 5434 -U postgres -d claude_todo
+
+# Or using connection string
+psql postgres://postgres:password@localhost:5434/claude_todo
+```
+
+#### Using Docker Exec
+```bash
+# Connect via Docker container
+docker exec -it claude-todo-postgres psql -U postgres -d claude_todo
+```
+
+#### Using pgcli (Enhanced PostgreSQL CLI)
+```bash
+# Install pgcli first: pip install pgcli
+pgcli postgres://postgres:password@localhost:5434/claude_todo
+```
+
+#### Common SQL Commands
+```sql
+-- List all tables
+\dt
+
+-- Describe todos table structure
+\d todos
+
+-- View all todos
+SELECT * FROM todos;
+
+-- View recent todos
+SELECT * FROM todos ORDER BY created_at DESC LIMIT 10;
+
+-- Exit
+\q
+```
+
+**Note:** Replace port `5434` with your configured `POSTGRES_PORT` from `.env` if different.
+
 ## Troubleshooting
 
 ### Common Issues
