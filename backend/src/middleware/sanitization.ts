@@ -11,8 +11,7 @@ purify.setConfig({
   ALLOWED_ATTR: [], // No attributes allowed
   KEEP_CONTENT: true, // Keep text content, remove only tags
   RETURN_DOM: false,
-  RETURN_DOM_FRAGMENT: false,
-  RETURN_DOM_IMPORT: false
+  RETURN_DOM_FRAGMENT: false
 });
 
 const sanitizeValue = (value: unknown): unknown => {
@@ -46,17 +45,17 @@ export const sanitizeRequest = (req: Request, res: Response, next: NextFunction)
   try {
     // Sanitize request body
     if (req.body && typeof req.body === 'object') {
-      req.body = sanitizeValue(req.body);
+      req.body = sanitizeValue(req.body) as any;
     }
 
     // Sanitize query parameters
     if (req.query && typeof req.query === 'object') {
-      req.query = sanitizeValue(req.query);
+      req.query = sanitizeValue(req.query) as any;
     }
 
     // Sanitize URL parameters
     if (req.params && typeof req.params === 'object') {
-      req.params = sanitizeValue(req.params);
+      req.params = sanitizeValue(req.params) as any;
     }
 
     next();

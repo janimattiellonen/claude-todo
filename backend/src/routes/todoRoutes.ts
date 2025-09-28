@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { TodoController } from '../controllers/TodoController';
+import { TodoController } from '../controllers/todoController';
 import { TodoService } from '../services/TodoService';
 import { TodoRepository } from '../repositories/TodoRepository';
 import { validateRequest } from '../middleware/validation';
@@ -40,7 +40,7 @@ router.post('/todos',
 );
 
 router.put('/todos/:id',
-  validateRequest(todoParamsSchema.merge(updateTodoSchema)),
+  validateRequest(todoParamsSchema.and(updateTodoSchema)),
   asyncHandler(todoController.updateTodo)
 );
 
@@ -62,7 +62,7 @@ router.patch('/todos/:id/incomplete',
 
 // Todo filtering operations
 router.get('/todos/priority/:priority',
-  validateRequest(priorityParamsSchema.merge(queryPaginationSchema)),
+  validateRequest(priorityParamsSchema.and(queryPaginationSchema)),
   asyncHandler(todoController.getTodosByPriority)
 );
 

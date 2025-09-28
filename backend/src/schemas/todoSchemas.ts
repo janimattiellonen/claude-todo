@@ -34,9 +34,9 @@ export const priorityParamsSchema = z.object({
 
 export const queryPaginationSchema = z.object({
   query: z.object({
-    page: z.string().regex(/^\d+$/).transform(Number).optional().default('1'),
-    limit: z.string().regex(/^\d+$/).transform(Number).optional().default('10'),
+    page: z.string().regex(/^\d+$/).transform(Number).optional().default(1),
+    limit: z.string().regex(/^\d+$/).transform(Number).optional().default(10),
     sort: z.enum(['created_at', 'updated_at', 'priority', 'title']).optional().default('created_at'),
     order: z.enum(['asc', 'desc']).optional().default('desc')
-  }).optional().default({})
+  }).optional().default(() => ({ page: 1, limit: 10, sort: 'created_at' as const, order: 'desc' as const }))
 });
