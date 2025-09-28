@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: claude-todo-postgres
+    environment:
+      POSTGRES_DB: claude_todo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - claude-todo-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: claude-todo-backend
+    environment:
+      NODE_ENV: development
+      PORT: ${BACKEND_PORT:-8999}
+      DATABASE_URL: postgres://postgres:password@postgres:5432/claude_todo
+    ports:
+      - "${BACKEND_PORT:-8999}:${BACKEND_PORT:-8999}"
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - claude-todo-network
+
+volumes:
+  postgres_data:
+
+networks:
+  claude-todo-network:
+    driver: bridge
