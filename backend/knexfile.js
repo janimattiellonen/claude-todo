@@ -19,6 +19,23 @@ module.exports = {
     }
   },
 
+  test: {
+    client: 'postgresql',
+    connection: {
+      host: process.env.TEST_DB_HOST || 'localhost',
+      port: parseInt(process.env.TEST_DB_PORT || '5432'),
+      user: process.env.TEST_DB_USER || 'postgres',
+      password: process.env.TEST_DB_PASSWORD || 'password',
+      database: process.env.TEST_DB_NAME || 'claude_todo_test'
+    },
+    migrations: {
+      directory: './src/migrations'
+    },
+    seeds: {
+      directory: './src/seeds'
+    }
+  },
+
   production: {
     client: 'postgresql',
     connection: process.env.DATABASE_URL,
