@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { Todo, CreateTodo, UpdateTodo } from '../models/Todo';
-import { TodoNotFoundError, DatabaseError } from '../types/errors';
+import { DatabaseError } from '../types/errors';
 
 export interface ITodoRepository {
   findAll(): Promise<Todo[]>;
